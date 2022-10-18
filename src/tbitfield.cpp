@@ -11,14 +11,22 @@ TBitField::TBitField(int len) : BitLen(len) // = BitLen=len
 {
     if(len<=0)
         throw "Incorect Bitfield lenght";
-    MemLen = (len+31) >> 5;
+    //MemLen = (len+31) >> 5;
+   
+    MemLen = (len + sizeof(TELEM) * BITSINBYTE - 1) / (sizeof(TELEM) * BITSINBYTE);
+    
     pMem = new TELEM[MemLen];
     if (pMem!=NULL)
     {
-        for(int i = 0; i < MemLen;i++)
+        //for(int i = 0; i < MemLen;i++)
+        //{
+        //    pMem[i]=0;
+        //}
+        for(int i = 0; i < len; i++)
         {
-            pMem[i]=0;
+            ClrBit(i);
         }
+        //cout << *this << "\n";
     }
             
 }
@@ -26,6 +34,7 @@ TBitField::TBitField(int len) : BitLen(len) // = BitLen=len
 TBitField::TBitField(const TBitField& bf) // конструктор копирования
 {
     BitLen = bf.BitLen;
+    MemLen = bf.MemLen;
     pMem = new TELEM[MemLen];
     if (pMem != NULL)
         for (int i = 0; i < MemLen; i++) pMem[i] = bf.pMem[i];
@@ -38,13 +47,18 @@ TBitField::~TBitField()
 
 int TBitField::GetMemIndex(const int n) const // индекс Мем для бита n
 {
-    return n >> 5;// вместо деления n на 32
+    //return n >> 5;// вместо деления n на 32
+    return n / (sizeof(TELEM) * BITSINBYTE); //деление на 64 для long long
 }
 
 TELEM TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
-    return 1 << (n & 31);    //TELEM();
+    //return 1 << (n & 31);    //TELEM();
     //n & 31 заменяет n % 32 и вычисляет позицию нужного нам бита в соответствующем элементе массива intov
+    int mask = (sizeof(TELEM) * BITSINBYTE - 1);
+    int sdvig = (n & mask);
+    TELEM result = (TELEM)1 << sdvig;
+    return result;
 }
 
 // доступ к битам битового поля
@@ -58,7 +72,10 @@ void TBitField::SetBit(const int n) // установить бит с номер
 {
     if( (n>=0) && (n<BitLen))
     {
-        pMem[GetMemIndex(n)] = pMem[GetMemIndex(n)] | GetMemMask(n); // формирует битовую маску в которой позиция с номером n установлена в единицу, а остальные позиции нулевые
+        int i = GetMemIndex(n);
+        TELEM mask = GetMemMask(n);
+        TELEM newelem = pMem[i] | mask;
+        pMem[GetMemIndex(n)] = newelem; // формирует битовую маску в которой позиция с номером n установлена в единицу, а остальные позиции нулевые
     }
     else throw "Incorect Bitfield Index";
 }
@@ -70,10 +87,16 @@ void TBitField::ClrBit(const int n) // очистить бит с номером
     else throw "Incorect Bitfield Index";
 }
 
-int TBitField::GetBit(const int n) const // получить значение бита
+TELEM TBitField::GetBit(const int n) const // получить значение бита
 {
     if ( (n > -1) && (n < BitLen) )
-        return pMem[GetMemIndex(n)] & GetMemMask(n);
+    {
+        int i = GetMemIndex(n);
+        TELEM mask = GetMemMask(n);
+        TELEM result = pMem[i];
+        result = result & mask;
+        return result;
+    }
     else throw "Incorect Bitfield Index";
     return 0;
     //возвращаемый результат операции & над нужным элементом массива и битовой маской, где установлен 1 нужны бит
@@ -143,10 +166,12 @@ TBitField TBitField::operator~(void) // отрицание
 {
     int len = BitLen;
     TBitField temp(len);
+   // cout << temp << "\n";
     //for( int i = 0; i < MemLen; i++) temp.pMem[i] = ~pMem[i];
     for( int i =0; i < len; i++)
         if(GetBit(i) == 0)
             temp.SetBit(i);
+   // cout << temp << "\n";
     return temp;
 }
 

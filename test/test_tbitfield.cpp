@@ -17,7 +17,7 @@ TEST(TBitField, can_get_length)
 TEST(TBitField, new_bitfield_is_set_to_zero)
 {
   TBitField bf(100);
-
+    //cout << bf << "\n";
   int sum = 0;
   for (int i = 0; i < bf.GetLength(); i++)
   {
@@ -241,13 +241,15 @@ TEST(TBitField, can_invert_large_bitfield)
 {
   const int size = 38;
   TBitField bf(size), negBf(size), expNegBf(size);
+    //cout << "bf = " << bf << "\n";
   bf.SetBit(35);
+    //cout << "bf = " << bf << "\n";
   negBf = ~bf;
-
+    //cout << "negBf = " << negBf << "\n";
   for(int i = 0; i < size; i++)
     expNegBf.SetBit(i);
   expNegBf.ClrBit(35);
-
+   // cout << expNegBf << "\n";
   EXPECT_EQ(expNegBf, negBf);
 }
 

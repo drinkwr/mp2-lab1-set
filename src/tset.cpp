@@ -32,7 +32,7 @@ int TSet::GetMaxPower(void) const // получить макс. к-во эл-т�
     return MaxPower;
 }
 
-int TSet::IsMember(const int Elem) const // элемент множества?
+TELEM TSet::IsMember(const int Elem) const // элемент множества?
 {
     return BitField.GetBit(Elem);
 }
