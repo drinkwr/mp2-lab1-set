@@ -12,7 +12,7 @@
 
 using namespace std;
 
-typedef unsigned long long TELEM;
+typedef unsigned int TELEM;
 
 #define BITSINBYTE 8
 

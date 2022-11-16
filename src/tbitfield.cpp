@@ -18,14 +18,14 @@ TBitField::TBitField(int len) : BitLen(len) // = BitLen=len
     pMem = new TELEM[MemLen];
     if (pMem!=NULL)
     {
-        //for(int i = 0; i < MemLen;i++)
-        //{
-        //    pMem[i]=0;
-        //}
-        for(int i = 0; i < len; i++)
+        for(int i = 0; i < MemLen;i++)
         {
-            ClrBit(i);
+            pMem[i]=0;
         }
+       // for(int i = 0; i < len; i++)
+       // {
+      //      ClrBit(i);
+        //}
         //cout << *this << "\n";
     }
             
