@@ -17,7 +17,7 @@ TEST(TBitField, can_get_length)
 TEST(TBitField, new_bitfield_is_set_to_zero)
 {
   TBitField bf(100);
-
+    //cout << bf << "\n";
   int sum = 0;
   for (int i = 0; i < bf.GetLength(); i++)
   {
@@ -241,13 +241,15 @@ TEST(TBitField, can_invert_large_bitfield)
 {
   const int size = 38;
   TBitField bf(size), negBf(size), expNegBf(size);
+    //cout << "bf = " << bf << "\n";
   bf.SetBit(35);
+    //cout << "bf = " << bf << "\n";
   negBf = ~bf;
-
+    //cout << "negBf = " << negBf << "\n";
   for(int i = 0; i < size; i++)
     expNegBf.SetBit(i);
   expNegBf.ClrBit(35);
-
+   // cout << expNegBf << "\n";
   EXPECT_EQ(expNegBf, negBf);
 }
 
@@ -308,4 +310,23 @@ TEST(TBitField, bitfields_with_different_bits_are_not_equal)
   bf2.SetBit(2);
 
   EXPECT_NE(bf1, bf2);
+}
+
+TEST(TBitField, can_do_OR_correctly) {
+    const int size1 = 70, size2 = 35;
+    TBitField bf1(size1), bf2(size2), bf3(size1);
+    for (int i = 0; i < size1; i += 2) {
+        bf1.SetBit(i);
+        bf3.SetBit(i);
+    }
+    for (int i = 1; i < size2; i += 2) {
+        bf2.SetBit(i);
+        bf3.SetBit(i);
+    }
+
+    TBitField res1 = bf1 | bf2;
+    TBitField res2 = bf2 | bf1;
+
+    EXPECT_EQ(bf3, res1);
+    EXPECT_EQ(bf3, res2);
 }
